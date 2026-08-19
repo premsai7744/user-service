@@ -6,11 +6,14 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.myshopping.user_service.entity.UserDetailsResponse;
 import com.myshopping.user_service.entity.UserRegistration;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserRegistration, UUID> {
 
 	Optional<UserRegistration> findByEmail(String email);
+
+	Optional<UserRegistration> findByEmailAndPassword(String email, String password);
 
 }

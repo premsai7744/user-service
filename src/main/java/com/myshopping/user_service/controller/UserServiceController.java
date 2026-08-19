@@ -10,8 +10,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.myshopping.user_service.dto.UserCredentialsRequestDTO;
+import com.myshopping.user_service.dto.UserDetailsResponseDTO;
 import com.myshopping.user_service.dto.UserRegistrationRequestDTO;
 import com.myshopping.user_service.service.UserService;
+
+import jakarta.validation.Valid;
 
 
 @RestController
@@ -24,7 +28,7 @@ public class UserServiceController {
 	UserService userService;
 	
 	@PostMapping(path="/register")
-	public ResponseEntity<String> userRegistration(@RequestBody UserRegistrationRequestDTO userRegistrationRequestDTO){
+	public ResponseEntity<String> userRegistration(@Valid @RequestBody UserRegistrationRequestDTO userRegistrationRequestDTO){
 		
 		logger.info("User registration request received by controller {}",userRegistrationRequestDTO);
 		
@@ -40,4 +44,51 @@ public class UserServiceController {
 								 .body(response);
 		}
 	}
+	
+	
+	
+	@PostMapping(path="/login")
+	public ResponseEntity<UserDetailsResponseDTO> userLogin(@Valid @RequestBody UserCredentialsRequestDTO userCredentialsRequestDTO){
+		
+		logger.info("Login request received by controller : userCredentialsRequestDTO {}",userCredentialsRequestDTO);
+		UserDetailsResponseDTO userDetailsResponseDTO = userService.login(userCredentialsRequestDTO);
+		
+		if(userDetailsResponseDTO==null) {
+			logger.info("userDetailsResposneDTO is null {}",userDetailsResponseDTO);
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+								 .body(userDetailsResponseDTO);
+		} else {
+			logger.info("userDetailsResponseDTO is not null {}",userDetailsResponseDTO);
+			return ResponseEntity.status(HttpStatus.OK)
+					             .body(userDetailsResponseDTO);
+		}
+		
+	} 
+	
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
