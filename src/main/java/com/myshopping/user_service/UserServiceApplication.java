@@ -1,4 +1,4 @@
-package com.myshopping.demo;
+package com.myshopping.user_service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
