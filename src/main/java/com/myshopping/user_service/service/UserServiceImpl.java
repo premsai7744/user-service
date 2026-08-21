@@ -7,13 +7,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.myshopping.user_service.dto.DeleteUserDTO;
 import com.myshopping.user_service.dto.UserCredentialsRequestDTO;
 import com.myshopping.user_service.dto.UserDetailsResponseDTO;
 import com.myshopping.user_service.dto.UserRegistrationRequestDTO;
+import com.myshopping.user_service.dto.UserUpdateDTO;
 import com.myshopping.user_service.entity.UserDetailsResponse;
 import com.myshopping.user_service.entity.UserRegistration;
 import com.myshopping.user_service.mapper.UserMapper;
 import com.myshopping.user_service.repository.UserRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -67,5 +71,75 @@ public class UserServiceImpl implements UserService {
 			return userDetailsResponseDTO;
 		}
 	}
+
+	@Override
+	public String updateUser(String emailId, UserUpdateDTO userUpdateDTO) {
+		logger.info("Service performing update operation.");
+		
+		Optional<UserRegistration> optionalOfUserRegistration = userRepository.findByEmail(emailId);
+		
+		UserRegistration userRegistration = null;
+		
+		if(optionalOfUserRegistration.isPresent()) {
+			logger.info("User exists by emailId : {}",emailId);
+			
+			userRegistration = optionalOfUserRegistration.get();
+			logger.info("User info from db : userRegistration {}",userRegistration);
+			
+			logger.info("User update request : userUpdateDTO {}",userUpdateDTO);
+			
+			userMapper.toUpdateRegistrationEntity(userUpdateDTO, userRegistration);
+			
+			logger.info("User info updated successfully. userRegistration : {}",userRegistration);
+		
+			return "User details updated successfully for user : "+userRegistration.getFirstName();
+		} else {
+			logger.info("User doesn't exist by emailId : {}",emailId);
+			return null;
+		}
+	}
+
+	@Transactional
+	@Override
+	public String deleteUser(DeleteUserDTO deleteUserDTO) {
+		logger.info("Initialized delete operation.");
+		
+		Optional<UserRegistration> optionalOfUserRegistration = userRepository.findByEmailAndPassword(deleteUserDTO.getEmail(), deleteUserDTO.getPassword());
+		
+		if(optionalOfUserRegistration.isPresent()) {
+			UserRegistration user = optionalOfUserRegistration.get();
+			logger.info("User info : {}",user);
+			
+			userRepository.delete(user);
+			userRepository.flush();
+			logger.info("Account deleted successfully for user : "+user.getFirstName());
+			return "Account deleted successfully for user : "+user.getFirstName();
+		} else {
+			logger.info("Email or password entered wrong, Unable to delete account.");
+			return "Email or password entered wrong, Unable to delete account.";
+		}
+		
+	}
 	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

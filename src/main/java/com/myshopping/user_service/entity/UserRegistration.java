@@ -3,6 +3,9 @@ package com.myshopping.user_service.entity;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,6 +26,7 @@ public class UserRegistration {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
 	@Column(name="user_id")
+	@JdbcTypeCode(SqlTypes.VARCHAR)
 	private UUID userId;
 	
 	@Column(name="first_name")
