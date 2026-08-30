@@ -1,5 +1,6 @@
 package com.myshopping.user_service.controller;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -23,6 +24,7 @@ import com.myshopping.user_service.dto.UserRegistrationRequestDTO;
 import com.myshopping.user_service.dto.UserUpdateDTO;
 import com.myshopping.user_service.service.UserService;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.validation.Valid;
 
 
@@ -111,10 +113,17 @@ public class UserServiceController {
 		}
 	}
 	
+	@CircuitBreaker(name = "user-service",fallbackMethod = "createOrderFailure")
 	@GetMapping("/search/orders/{paidBy}")
 	public ResponseEntity<List<com.myshopping.user_service.dto.OrdersInfoDTO>> searchOrders(@PathVariable String paidBy){
 		return userService.searchOrders(paidBy);
 		
+	}
+	
+	public ResponseEntity<List<com.myshopping.user_service.dto.OrdersInfoDTO>> createOrderFailure(Throwable ex){
+		System.out.println(ex.getMessage());
+		return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+				             .body(Collections.emptyList());
 	}
 
 	
