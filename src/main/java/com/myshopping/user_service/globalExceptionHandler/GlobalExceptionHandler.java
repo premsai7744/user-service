@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
 	}
 	
 	
-	@ExceptionHandler(Exception.class)
+	/*@ExceptionHandler(Exception.class)
 	public ResponseEntity<String> handleException(Exception exception){
 		logger.info("Handling Exception.");
 		
@@ -44,7 +44,8 @@ public class GlobalExceptionHandler {
 		return ResponseEntity
 				.status(HttpStatus.INTERNAL_SERVER_ERROR)
 				.body("Something went wrong.");
-	}
+	}*/
+	
 }
 
 
