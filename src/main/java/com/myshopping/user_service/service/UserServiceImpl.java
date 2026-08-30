@@ -1,21 +1,27 @@
 package com.myshopping.user_service.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.myshopping.user_service.dto.DeleteUserDTO;
+import com.myshopping.user_service.dto.OrdersInfoDTO;
 import com.myshopping.user_service.dto.UserCredentialsRequestDTO;
 import com.myshopping.user_service.dto.UserDetailsResponseDTO;
 import com.myshopping.user_service.dto.UserRegistrationRequestDTO;
 import com.myshopping.user_service.dto.UserUpdateDTO;
 import com.myshopping.user_service.entity.UserDetailsResponse;
 import com.myshopping.user_service.entity.UserRegistration;
+import com.myshopping.user_service.feignclients.OrderServiceFeginClient;
 import com.myshopping.user_service.mapper.UserMapper;
 import com.myshopping.user_service.repository.UserRepository;
+import com.netflix.discovery.converters.Auto;
 
 import jakarta.transaction.Transactional;
 
@@ -29,6 +35,9 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	UserMapper userMapper;
+	
+	@Autowired
+	OrderServiceFeginClient orderServiceFeginClient;
 	
 	@Override
 	public String userRegistration(UserRegistrationRequestDTO userRegistrationRequestDTO) {
@@ -119,6 +128,11 @@ public class UserServiceImpl implements UserService {
 			return "Email or password entered wrong, Unable to delete account.";
 		}
 		
+	}
+
+	@Override
+	public ResponseEntity<List<OrdersInfoDTO>> searchOrders(String paidBy) {
+		return orderServiceFeginClient.searchOrders(paidBy);
 	}
 	
 }
